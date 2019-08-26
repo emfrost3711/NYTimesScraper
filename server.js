@@ -51,6 +51,8 @@ app.get("/scrape", function(req, res) {
       result.link = $(this)
         .children("a")
         .attr("href");
+      // result.img = $(this)
+      //   .find("<img srcset="https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_180,q_80,w_320/abwm6w3prjmdcyvoqfxn.jpg 320w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_264,q_80,w_470/abwm6w3prjmdcyvoqfxn.jpg 470w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_450,q_80,w_800/abwm6w3prjmdcyvoqfxn.jpg 800w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_675,q_80,w_1200/abwm6w3prjmdcyvoqfxn.jpg 1200w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,fl_progressive,g_center,h_900,q_80,w_1600/abwm6w3prjmdcyvoqfxn.jpg 1600w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_80,q_80,w_80/abwm6w3prjmdcyvoqfxn.jpg 80w" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" sizes="(max-width: 450px) 100vw, (max-width: 850px) 420px, 420px" data-chomp-id="abwm6w3prjmdcyvoqfxn" data-format="jpg" data-default-transform="KinjaCenteredLargeAutoFrozen" data-sizes="(max-width: 450px) 100vw, (max-width: 850px) 420px, 420px" data-relative="true" data-show-background="true" data-poster-src="" data-anim-src="" data-cropped="true" class="dv4r5q-2 bkbWgk">")
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
@@ -71,7 +73,6 @@ app.get("/scrape", function(req, res) {
 
 // Route for getting all Articles from the db
 app.get("/articles", function(req, res) {
-  // TODO: Finish the route so it grabs all of the articles
   db.Article.find({})
   .then(function(dbArticle) {
       console.log(dbArticle);
@@ -84,8 +85,6 @@ app.get("/articles", function(req, res) {
 
 // Route for grabbing a specific Article by id, populate it with it's note
 app.get("/articles/:id", function(req, res) {
-  // TODO
-  // ====
   db.Article.findOne({ _id: req.params.id })
   .populate("note")
   .then(function(dbArticle) {
