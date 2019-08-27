@@ -73,3 +73,19 @@ $(document).on("click", "#savenote", function () {
   $("#titleinput").val("");
   $("#bodyinput").val("");
 });
+
+
+//on click event for 'Scrape New Articles!' button
+$(".scrape-new").on("click", function() {
+    $.getJSON("/scrape", function(data) {
+      displayResults(data);
+    });
+});
+
+
+//on click event for 'Clear Articles!' button
+$(".clear").on("click", function () {
+    $.getJSON("/saved", function(data) {
+      clearImmediate(data); //is this what I want to use? How do I clear the saved articles? 
+    });
+});
