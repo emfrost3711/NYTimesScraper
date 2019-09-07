@@ -40,25 +40,28 @@ app.get("/scrape", function(req, res) {
     var $ = cheerio.load(response.data);
 
     // Now, we grab every headline within an article tag, and do the following:
-    $(".content-meta__headline__wrapper").each(function(i, element) {
+    $(".curation-module__item__wrapper, .branded-item").each(function(i, element) {
       // Save an empty result object
       var result = {};
-
+      let imglink = $(this)
+      .find("img")
+      .attr("srcset")
+      .split(" ");
+      console.log(imglink);
       // Add the text and href of every link, and save them as properties of the result object
       result.title = $(this)
         .find(".sc-1vk1s7l-2")
         .text();
       result.link = $(this)
-        .children("a")
+        .find("a")
         .attr("href");
-      // result.img = $(this)
-      //   .find("<img srcset="https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_180,q_80,w_320/abwm6w3prjmdcyvoqfxn.jpg 320w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_264,q_80,w_470/abwm6w3prjmdcyvoqfxn.jpg 470w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_450,q_80,w_800/abwm6w3prjmdcyvoqfxn.jpg 800w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_675,q_80,w_1200/abwm6w3prjmdcyvoqfxn.jpg 1200w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,fl_progressive,g_center,h_900,q_80,w_1600/abwm6w3prjmdcyvoqfxn.jpg 1600w, https://i.kinja-img.com/gawker-media/image/upload/c_fill,f_auto,fl_progressive,g_center,h_80,q_80,w_80/abwm6w3prjmdcyvoqfxn.jpg 80w" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" sizes="(max-width: 450px) 100vw, (max-width: 850px) 420px, 420px" data-chomp-id="abwm6w3prjmdcyvoqfxn" data-format="jpg" data-default-transform="KinjaCenteredLargeAutoFrozen" data-sizes="(max-width: 450px) 100vw, (max-width: 850px) 420px, 420px" data-relative="true" data-show-background="true" data-poster-src="" data-anim-src="" data-cropped="true" class="dv4r5q-2 bkbWgk">")
+      result.img = imglink[0];
 
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
         .then(function(dbArticle) {
           // View the added result in the console
-          console.log(dbArticle);
+          // console.log(dbArticle);
         })
         .catch(function(err) {
           // If an error occurred, log it
@@ -101,8 +104,10 @@ app.get("/articles/:id", function(req, res) {
 // Route for saving/updating an Article's associated Note
 app.post("/articles/:id", function(req, res) {
   // TODO
+  console.log("we hit the route of app.post articles/id");
   db.Note.create(req.body)
   .then(function(note) {
+    console.log(note);
     return db.Article.findOneAndUpdate({_id: req.params.id}, {$push: { note: note._id}}, {new: true});
   })
   .then(function(article) {
